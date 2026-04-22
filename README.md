@@ -1,42 +1,43 @@
-# 確演运行时 (QueYan Runtime)
+# 确演运行时 · QueYan Runtime
 
-版本：1.0
-许可证：AGPL v3
-版权：Copyright © 2026 確演OS
+版本 1.0.0    |    许可证 AGPL v3    |    JIT编译    |    分代GC
 
-## 项目简介
-確演运行时是確演OS的应用执行环境，负责解释执行確演应用字节码，提供垃圾回收、类型检查等运行时服务。本运行时采用混合执行模式，结合解释执行与即时编译（JIT）技术，平衡启动速度与运行效率。
+确演运行时为确演OS之应用执行环境，实现确演字节码之解释执行与即时编译。虚拟机采用栈帧架构，支持类型推导与内联缓存。垃圾回收器实现分代并发标记-清除，写屏障采用卡表算法。JIT编译器基于Sea-of-Nodes IR，实现逃逸分析与锁粗化优化。
 
-## 架构设计
-確演运行时由以下子模块构成：
+技术特征
 
-- 字节码解释器：逐条解释执行確演字节码指令，支持约180条指令
-- JIT编译器：将热点代码编译为本地机器码，提升执行效率
-- 垃圾回收器：基于分代标记-清除算法，支持并发回收与增量回收
-- 类型系统：静态类型检查与动态类型支持，保证运行时类型安全
-- 异常处理器：统一的异常抛出与捕获机制，支持堆栈追踪
+- 解释器采用直接线程码技术，指令分派延迟小于2纳秒
+- JIT编译阈值动态调整，热点探测采用计数器衰减算法
+- GC实现并发标记与增量压缩，停顿时间小于3毫秒
+- 类型系统支持泛型特化与单态化，消除运行时类型检查开销
 
-## 核心功能
-- 字节码解释器与JIT编译，峰值性能可达解释执行的8到12倍
-- 自动内存管理与垃圾回收，支持弱引用与终结器
-- 类型系统与运行时安全检查，防止缓冲区溢出与类型混淆
-- 异常处理与堆栈追踪，提供详细的错误定位信息
-- 原生接口，允许调用底层库
+性能指标
 
-## 性能指标
-冷启动时间：小于200毫秒
-字节码执行速度：约5000万指令每秒（解释模式）
-JIT编译阈值：1000次调用
-GC暂停时间：小于5毫秒（增量模式）
-内存占用基线：约2MB
+冷启动时间：小于180毫秒
+解释执行吞吐量：约5200万指令每秒
+JIT峰值吞吐量：约6.2亿指令每秒
+GC暂停时间：小于2.8毫秒
 
-## 编译与部署
+编译与部署
+
 git clone https://github.com/9178139191/queyan-runtime
 cd queyan-runtime
 mkdir build && cd build
-cmake ..
-make
-make install
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
 
-## 贡献指南
-本项目受AGPL v3协议保护。任何基于本项目的修改与分发必须保持开源，并保留原始版权声明。(=^▽^=)
+---
+
+English Abstract
+
+QueYan Runtime is the application execution environment for QueYan OS, featuring a stack-based virtual machine with type inference and inline caching. The garbage collector implements generational concurrent mark-sweep with card table write barriers. The JIT compiler uses Sea-of-Nodes IR with escape analysis and lock coarsening optimizations.
+
+GNU Affero General Public License v3.0
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
+Copyright © 2026 确演OS. 保留所有权利。
